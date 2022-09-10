@@ -28,6 +28,8 @@ end)
 
 movement:addToggle("Fly")
 
+movement:addToggle("NoClip")
+
 local health = playerPage:addSection("Health")
 
 health:addButton("Heal", function()
