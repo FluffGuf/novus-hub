@@ -13,16 +13,13 @@ local themes = {
 	TextColor = Color3.fromRGB(255, 255, 255)
 }
 
--- first page
+-- player page
 local playerPage = novus:addPage("Player", 5012544693)
 
--- getting needed vars for Player
-local humanoid = game.Players.LocalPlayer.Character.Humanoid
-
--- sections
 local movement = playerPage:addSection("Movement")
+
 movement:addSlider("WalkSpeed", 16, 16, 500, function(ws)
-    humanoid.WalkSpeed = ws
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
 end)  
 
 movement:addSlider("JumpPower", 50, 50, 500, function(jp)
@@ -32,7 +29,20 @@ end)
 local health = playerPage:addSection("Health")
 
 health:addButton("Heal", function()
-    humanoid.Hewalth = humanoid.MaxHealth
+    game.Players.LocalPlayer.Character.Humanoid.Health = game.Players.LocalPlayer.Character.Humanoid.MaxHealth
+end)
+
+local RunService = game:GetService("RunService")
+local humanoid = game.Players.LocalPlayer.Character.Humanoid
+
+health:addToggle("Godmode", default, function()
+    if default then
+        RunService.Heartbeat:Connect(function()
+            humanoid.Health = 100
+        end)
+    else
+        RunService.Heartbeat:Disconnect()
+    end
 end)
 
 -- extras page
@@ -83,7 +93,9 @@ local button = uilib:addButton("Venyx UI Lib", function()
     return
 end)
 
-
+if game.PlaceId == 2809202155 then
+    novus:addPage("YBA", 5012544693)
+end
 
 -- load
 novus:SelectPage(novus.pages[1], true)
