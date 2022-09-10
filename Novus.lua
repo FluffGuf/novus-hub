@@ -26,7 +26,8 @@ movement:addSlider("JumpPower", 50, 50, 500, function(jp)
     humanoid.JumpPower = jp
 end)
 
-movement:addToggle("Fly")
+movement:addToggle("Fly", function()
+end)
 
 local health = playerPage:addSection("Health")
 
