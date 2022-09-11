@@ -2,6 +2,8 @@
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
 local novus = library.new("Novus Hub", 5013109572)
 
+--require("try-catch")
+
 
 -- themes
 local themes = {
@@ -85,15 +87,12 @@ if game.PlaceId == 3956818381 then
     end)
     
     local nlAutoHatch = ninjaLegendsPage:addSection("Auto Hatch")
-
     nlAutoHatch:addToggle("Auto Hatch Infinity Void Crystal", false, function(state)
         while true do
             if state == false then return end
-            local remoteAutoEvolve = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote")
-            local event = "openCrystal"
-            local crystal = "Infinity Void Crystal"
-            local remoteFunction = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
-            remoteFunction:InvokeServer(event, crystal)
+            local openCrytalRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+            local autoEvolveRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote")
+            openCrystalRemote:InvokeServer("openCrystal", "Infinity Void Crystal")
             wait(0.2)
             remoteAutoEvolve:InvokeServer("autoEvolvePets")
             wait(0.2)
@@ -110,7 +109,22 @@ if game.PlaceId == 3956818381 then
         end
         wait(0.1)
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
-    end)   
+    end)  
+
+    local chests =
+    {"Mythical Chest", "Golden Chest", "Enchanted Chest", "Magma Chest","Legends Chest",
+    "Eternal Chest", "Sahara Chest", "Thunder Chest", "Ancient Chest","Midnight Shadow Chest",
+    "Wonder Chest", "Ultra Ninjiutsu Chest", "Golden Zen Chest","Skystorm Masters Chest",
+    "Chaos Legends Chest"}
+
+    nlMisc:addButton("Collect all Chests", function()
+        local chestRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("checkChestRemote")
+        for i, v in pairs(chests) do
+            print(v)
+            chestRemote:InvokeServer(v)
+            wait(3)
+        end
+    end)
 end
 
 -- player page
