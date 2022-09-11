@@ -13,6 +13,90 @@ local themes = {
 	TextColor = Color3.fromRGB(255, 255, 255)
 }
 
+-- ninja legends
+if game.PlaceId == 3956818381 then
+    local ninjalegenpage = novus:addPage("Ninja Legends", 5012544693)
+    
+    local nlautofarm = ninjalegenpage:addSection("Auto Farm")
+   
+    nlautofarm:addToggle("AutoSwing", false, function(nlas)
+        getgenv().autoswing = nlas
+        while true do
+            if not getgenv().autoswing then return end
+            for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                if v:FindFirstChild("ninjitsuGain") then
+                    game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+                    break
+                end
+            end
+            local A_1 = "swingKatana"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1)
+            wait()
+        end
+    end)
+
+    nlautofarm:addToggle("AutoSell", false, function(nlas)
+        getgenv().autosell = nlas
+        while true do
+            if getgenv().autoswing == false then return end
+            game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            wait(0.1)
+            game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = CFrame.new(0,0,0)
+            wait(0.1)
+        end
+    end)
+
+    local nlautobuy = ninjalegenpage:addSection("Auto Buy")
+
+    nlautobuy:addToggle("Auto Buy Swords", false, function(nlabs)
+        getgenv().buyswords = nlabs
+        while true do
+            if not getgenv().buyswords then return end
+            local A_1 = "buyAllSwords"
+            local A_2 = "Blazing Vortex Island"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1, A_2)
+            wait(0.5)
+        end
+    end)
+
+    nlautobuy:addToggle("Auto Buy Belts", false, function(nlabb)
+        getgenv().buybelts = nlabb
+        while true do
+            if not getgenv().buybelts then return end
+            local A_1 = "buyAllBelts"
+            local A_2 = "Blazing Vortex Island"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1, A_2)
+            wait(0.5)
+        end
+    end)
+
+    nlautobuy:addToggle("Auto Buy Ranks", false, function(nlabr)
+        getgenv().buyRank = nlabr
+        while true do
+            if not getgenv().buyRank then return end
+            local A_1 = "buyRank"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1)
+            wait(0.5)
+        end
+    end)
+    
+    local nlmisc = ninjalegenpage:addSection("Misc")
+
+    nlmisc:addButton("Unlock Islands", function()
+        local oldcframe = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        for _,v in pairs(game:GetService("Workspace").islandUnlockParts:GetChildren()) do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+            wait(0.1)
+        end
+        wait(0.1)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldcframe
+    end)   
+end
+
 -- player page
 local playerPage = novus:addPage("Player", 5012544693)
 
