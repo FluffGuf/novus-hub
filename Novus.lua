@@ -89,11 +89,14 @@ if game.PlaceId == 3956818381 then
     nlAutoHatch:addToggle("Auto Hatch Infinity Void Crystal", false, function(state)
         while true do
             if state == false then return end
+            local remoteAutoEvolve = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote")
             local event = "openCrystal"
             local crystal = "Infinity Void Crystal"
             local remoteFunction = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
             remoteFunction:InvokeServer(event, crystal)
-            wait(3)
+            wait(0.2)
+            remoteAutoEvolve:InvokeServer("autoEvolvePets")
+            wait(0.2)
         end
     end)
 
