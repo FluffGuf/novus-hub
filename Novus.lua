@@ -125,6 +125,18 @@ if game.PlaceId == 3956818381 then
             wait(3)
         end
     end)
+
+    nlMisc:addButton("Collect Light Karma Chests", function()
+        game:GetService("Workspace").lightKarmaChest["circleInner"].CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        wait(5)
+        game:GetService("Workspace").lightKarmaChest["circleInner"].CFrame = game.Workspace.Part.CFrame
+    end)
+
+    nlMisc:addButton("Collect Dark Karma Chests", function()
+        game:GetService("Workspace").evilKarmaChest["circleInner"].CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        wait(5)
+        game:GetService("Workspace").evilKarmaChest["circleInner"].CFrame = game.Workspace.Part.CFrame
+    end)
 end
 
 -- player page
