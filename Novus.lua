@@ -15,13 +15,12 @@ local themes = {
 
 -- ninja legends
 if game.PlaceId == 3956818381 then
-    local ninjaLegendsPage = novus:addPage("Ninja Legends", 5012544693)
+    local ninjalegenpage = novus:addPage("Ninja Legends", 5012544693)
     
-    local nlAutoFarm = ninjaLegendsPage:addSection("Auto Farm")
+    local nlautofarm = ninjalegenpage:addSection("Auto Farm")
    
-    nlAutoFarm:addToggle("AutoSwing", false, function(nlAutoSwing)
-        -- nl stands for Ninja Legends
-        getgenv().autoswing = nlAutoSwing
+    nlautofarm:addToggle("AutoSwing", false, function(nlas)
+        getgenv().autoswing = nlas
         while true do
             if not getgenv().autoswing then return end
             for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
@@ -37,10 +36,10 @@ if game.PlaceId == 3956818381 then
         end
     end)
 
-    nlAutoFarm:addToggle("AutoSell", false, function(nlAutoSell)
-        getgenv().autosell = nlAutoSell
+    nlautofarm:addToggle("AutoSell", false, function(nlas)
+        getgenv().autosell = nlas
         while true do
-            if getgenv().autosell == false then return end
+            if getgenv().autoswing == false then return end
             game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
             wait(0.1)
             game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = CFrame.new(0,0,0)
@@ -48,35 +47,36 @@ if game.PlaceId == 3956818381 then
         end
     end)
 
-    local nlAutoBuy = ninjaLegendsPage:addSection("Auto Buy")
-    local bestIsland = "Blazing Vortex Island"
+    local nlautobuy = ninjalegenpage:addSection("Auto Buy")
 
-    nlAutoBuy:addToggle("Auto Buy Swords", false, function(nlAutoBuySwords)
-        getgenv().buyswords = nlAutoBuySwords
+    nlautobuy:addToggle("Auto Buy Swords", false, function(nlabs)
+        getgenv().buyswords = nlabs
         while true do
             if not getgenv().buyswords then return end
             local A_1 = "buyAllSwords"
+            local A_2 = "Blazing Vortex Island"
             local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1, bestIsland)
+            Event:FireServer(A_1, A_2)
             wait(0.5)
         end
     end)
 
-    nlAutoBuy:addToggle("Auto Buy Belts", false, function(nlAutoBuyBelts)
-        getgenv().buybelts = nlAutoBuyBelts
+    nlautobuy:addToggle("Auto Buy Belts", false, function(nlabb)
+        getgenv().buybelts = nlabb
         while true do
             if not getgenv().buybelts then return end
             local A_1 = "buyAllBelts"
+            local A_2 = "Blazing Vortex Island"
             local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1, bestIsland)
+            Event:FireServer(A_1, A_2)
             wait(0.5)
         end
     end)
 
-    nlAutoBuy:addToggle("Auto Buy Ranks", false, function(nlAutoBuyRanks)
-        getgenv().buyrank = nlAutoBuyRanks
+    nlautobuy:addToggle("Auto Buy Ranks", false, function(nlabr)
+        getgenv().buyRank = nlabr
         while true do
-            if not getgenv().buyrank then return end
+            if not getgenv().buyRank then return end
             local A_1 = "buyRank"
             local Event = game:GetService("Players").LocalPlayer.ninjaEvent
             Event:FireServer(A_1)
@@ -84,34 +84,16 @@ if game.PlaceId == 3956818381 then
         end
     end)
     
-    local nlAutoHatch = ninjaLegendsPage:addSection("Auto Hatch")
+    local nlmisc = ninjalegenpage:addSection("Misc")
 
-    nlAutoHatch:addToggle("Auto Hatch Infinity Void Crystal", false, function(state)
-        print("Called Function")
-        print(state)
-        while true do
-            if state == false then return 
-                +
-            print("Opened!")
-            local event = "openCrystal"
-            local crystal = "Infinity Void Crystal"
-            local remoteFunction = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
-            if remoteFunction ~= nil then print("Function found!") end
-            remoteFunction:InvokeServer(event, crystal)
-            wait(3)
-        end
-    end)
-
-    local nlMisc = ninjaLegendsPage:addSection("Misc")
-
-    nlMisc:addButton("Unlock Islands", function()
-        local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    nlmisc:addButton("Unlock Islands", function()
+        local oldcframe = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
         for _,v in pairs(game:GetService("Workspace").islandUnlockParts:GetChildren()) do
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
             wait(0.1)
         end
         wait(0.1)
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldcframe
     end)   
 end
 
@@ -142,10 +124,10 @@ end)
 local RunService = game:GetService("RunService")
 local humanoid = game.Players.LocalPlayer.Character.Humanoid
 
-health:addToggle("Godmode", false, function(v)
-    if v then
+health:addToggle("Godmode", default, function()
+    if default then
         RunService.Heartbeat:Connect(function()
-            humanoid.Health = humanoid.MaxHealth
+            humanoid.Health = 100
         end)
     else
         RunService.Heartbeat:Disconnect()
