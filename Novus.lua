@@ -1,7 +1,9 @@
 -- init
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
 local novus = library.new("Novus Hub", 5013109572)
+
 --require("try-catch")
+
 -- themes
 local themes = {
 	Background = Color3.fromRGB(24, 24, 24),
@@ -106,7 +108,22 @@ if game.PlaceId == 3956818381 then
             wait(0.2)
         end
     end)
+    
+    local nlTeleport = ninjaLegendsPage:addSection("Teleport")
+
+    local Islands = {}
+    for i,v in next, game.workspace.islandUnlockParts:GetChildren() do 
+        if v then 
+            table.insert(Islands, v.Name)
+        end
+    end
+    
+    nlTeleport:addDropdown("Select Island", Islands, function(island)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.islandUnlockParts[island].islandSignPart.CFrame
+    end)
+    
     local nlMisc = ninjaLegendsPage:addSection("Misc")
+    
     nlMisc:addButton("Unlock Islands", function()
         local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
         for _,v in pairs(game:GetService("Workspace").islandUnlockParts:GetChildren()) do
