@@ -75,6 +75,17 @@ if game.PlaceId == 3956818381 then
         end
     end)
 
+    nlAutoBuy:addToggle("Auto Buy Skills", false, function(nlAutoBuySkills)
+        getgenv().buyskills = nlAutoBuySkills
+        while true do
+            if not getgenv().buyskills then return end
+            local A_1 = "buyAllSkills"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1, bestIsland)
+            wait(0.5)
+        end
+    end)
+
     nlAutoBuy:addToggle("Auto Buy Ranks", false, function(nlAutoBuyRanks)
         getgenv().buyrank = nlAutoBuyRanks
         while true do
