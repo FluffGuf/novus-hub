@@ -163,12 +163,21 @@ health:addToggle("Godmode", false, function(v)
         RunService.Heartbeat:Disconnect()
     end
 end)
+
 -- extras page
 local extra = novus:addPage("Extra", 5012544693)
+
 local e_player = extra:addSection("Player")
 e_player:addButton("AntiAFK", function()
     for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end
 end)
+
+e_player:addButton("Rejoin", function()
+    local ts = game:GetService("TeleportService")
+    local p = game:GetService("Players").LocalPlayer
+    ts:Teleport(game.PlaceId, p)
+end)
+
 -- settings page
 local settings = novus:addPage("Settings", 5012544693)
 local colors = settings:addSection("Colors")
