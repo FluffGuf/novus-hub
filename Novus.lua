@@ -56,11 +56,23 @@ if game.PlaceId == 3956818381 then
             wait(0.5)
         end
     end)
+
     nlAutoBuy:addToggle("Auto Buy Belts", false, function(nlAutoBuyBelts)
         getgenv().buybelts = nlAutoBuyBelts
         while true do
             if not getgenv().buybelts then return end
             local A_1 = "buyAllBelts"
+            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            Event:FireServer(A_1, bestIsland)
+            wait(0.5)
+        end
+    end)
+
+    nlAutoBuy:addToggle("Auto Buy Skills", false, function(nlAutoBuySkills)
+        getgenv().buyskills = nlAutoBuySkills
+        while true do
+            if not getgenv().buyskills then return end
+            local A_1 = "buyAllSkills"
             local Event = game:GetService("Players").LocalPlayer.ninjaEvent
             Event:FireServer(A_1, bestIsland)
             wait(0.5)
