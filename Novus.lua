@@ -97,10 +97,11 @@ if game.PlaceId == 3956818381 then
     end)
     
     local nlAutoHatch = ninjaLegendsPage:addSection("Auto Hatch")
+    
     nlAutoHatch:addToggle("Auto Hatch Infinity Void Crystal", false, function(state)
         while true do
             if state == false then return end
-            local openCrytalRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+            local openCrystalRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
             local autoEvolveRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote")
             openCrystalRemote:InvokeServer("openCrystal", "Infinity Void Crystal")
             wait(0.2)
@@ -108,8 +109,6 @@ if game.PlaceId == 3956818381 then
             wait(0.2)
         end
     end)
-
-    local nlMisc = ninjaLegendsPage:addSection("Misc")
     
     local nlTeleport = ninjaLegendsPage:addSection("Teleport")
 
@@ -122,6 +121,37 @@ if game.PlaceId == 3956818381 then
     
     nlTeleport:addDropdown("Select Island", Islands, function(island)
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.islandUnlockParts[island].islandSignPart.CFrame
+    end)
+
+    nlTeleport:addButton("Mystical Waters (Good)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(347.74881, 8824.53809, 114.271019)
+    end)
+    
+    nlTeleport:addButton("Sword of Legends (Good)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1834.15967, 38.704483, -141.375641)
+    end)
+    nlTeleport:addButton("Elemental Tornado (Good)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(299.758484, 30383.0957, -90.1542206)
+    end)
+
+    nlTeleport:addButton("Zen Masters Blade (Good)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(5044.94384765625, 49.08012008666992, 1618.461181640625)             
+    end)
+
+    nlTeleport:addButton("Lava Pit (Bad)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-116.631485, 12952.5381, 271.14624)
+    end)
+        
+    nlTeleport:addButton("Tornado (Bad)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(325.641174, 16872.0938, -9.9906435)
+    end)
+        
+    nlTeleport:addButton("Swords Of Ancients (Bad)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(648.365662, 38.704483, 2409.72266)
+    end)
+
+    nlTeleport:addButton("Fallen Infinity Blade (Bad)", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1875.9486083984375, 39.43470001220703, -6805.74267578125)
     end)
     
     local nlMisc = ninjaLegendsPage:addSection("Misc")
@@ -207,9 +237,9 @@ e_player:addButton("AntiAFK", function()
 end)
 
 e_player:addButton("Rejoin", function()
-    local ts = game:GetService("TeleportService")
-    local p = game:GetService("Players").LocalPlayer
-    ts:Teleport(game.PlaceId, p)
+    local teleportService = game:GetService("TeleportService")
+    local player = game:GetService("Players").LocalPlayer
+    teleportService:Teleport(game.PlaceId, player)
 end)
 
 -- settings page
@@ -217,6 +247,7 @@ local settings = novus:addPage("Settings", 5012544693)
 
 local colors = settings:addSection("Colors")
 local keybinds = settings:addSection("Keybinds")
+local more = settings:addSection("More")
 
 for theme, color in pairs(themes) do -- all in one theme changer
 	colors:addColorPicker(theme, color, function(color3)
@@ -227,6 +258,10 @@ end
 keybinds:addKeybind("Toggle Keybind", Enum.KeyCode.PageDown, function()
 	novus:toggle()
 end, function()
+end)
+
+more:addButton("Close UI", function()
+    game.CoreGui:WaitForChild("Novus Hub"):Remove()
 end)
 
 -- credits page
