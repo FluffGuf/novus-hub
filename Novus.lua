@@ -4,7 +4,6 @@ local novus = library.new("Novus Hub", 5013109572)
 
 --require("try-catch")
 
-
 -- themes
 local themes = {
 	Background = Color3.fromRGB(24, 24, 24),
@@ -109,7 +108,25 @@ if game.PlaceId == 3956818381 then
             wait(0.2)
         end
     end)
+<<<<<<< HEAD
 
+    local nlMisc = ninjaLegendsPage:addSection("Misc")
+
+=======
+    
+    local nlTeleport = ninjaLegendsPage:addSection("Teleport")
+
+    local Islands = {}
+    for i,v in next, game.workspace.islandUnlockParts:GetChildren() do 
+        if v then 
+            table.insert(Islands, v.Name)
+        end
+    end
+    
+    nlTeleport:addDropdown("Select Island", Islands, function(island)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.islandUnlockParts[island].islandSignPart.CFrame
+    end)
+    
     local nlMisc = ninjaLegendsPage:addSection("Misc")
 
     nlMisc:addButton("Unlock Islands", function()
@@ -190,6 +207,12 @@ local e_player = extra:addSection("Player")
 
 e_player:addButton("AntiAFK", function()
     for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end
+end)
+
+e_player:addButton("Rejoin", function()
+    local ts = game:GetService("TeleportService")
+    local p = game:GetService("Players").LocalPlayer
+    ts:Teleport(game.PlaceId, p)
 end)
 
 -- settings page
