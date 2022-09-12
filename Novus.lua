@@ -108,11 +108,8 @@ if game.PlaceId == 3956818381 then
             wait(0.2)
         end
     end)
-<<<<<<< HEAD
 
     local nlMisc = ninjaLegendsPage:addSection("Misc")
-
-=======
     
     local nlTeleport = ninjaLegendsPage:addSection("Teleport")
 
