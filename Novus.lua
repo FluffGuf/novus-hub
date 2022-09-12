@@ -76,11 +76,15 @@ if game.PlaceId == 3956818381 then
     end)
 
     nlAutoBuy:addToggle("Auto Buy Ranks", false, function(nlAutoBuyRanks)
+        print("Function called")
         getgenv().buyrank = nlAutoBuyRanks
         while true do
+            print("Enterd while")
             if not getgenv().buyrank then return end
+            print("Buyed")
             local A_1 = "buyRank"
             local Event = game:GetService("Players").LocalPlayer.ninjaEvent
+            if Event then print("Event found!") end
             Event:FireServer(A_1)
             wait(0.5)
         end
@@ -112,30 +116,26 @@ if game.PlaceId == 3956818381 then
     end)  
 
     local chests =
-    {"Mythical Chest", "Golden Chest", "Enchanted Chest", "Magma Chest","Legends Chest",
-    "Eternal Chest", "Sahara Chest", "Thunder Chest", "Ancient Chest","Midnight Shadow Chest",
+    {"Mythical Chest", "Thunder Chest" "Golden Chest", "Enchanted Chest", "Magma Chest","Legends Chest",
+    "Eternal Chest", "Sahara Chest", "Ancient Chest","Midnight Shadow Chest",
     "Wonder Chest", "Ultra Ninjiutsu Chest", "Golden Zen Chest","Skystorm Masters Chest",
-    "Chaos Legends Chest"}
+    "Chaos Legends Chest", "Soul Fusion Chest"}
 
+    local chestRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("checkChestRemote")
     nlMisc:addButton("Collect all Chests", function()
-        local chestRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("checkChestRemote")
         for i, v in pairs(chests) do
-            print(v)
             chestRemote:InvokeServer(v)
             wait(3)
         end
     end)
 
-    nlMisc:addButton("Collect Light Karma Chests", function()
-        game:GetService("Workspace").lightKarmaChest["circleInner"].CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-        wait(5)
-        game:GetService("Workspace").lightKarmaChest["circleInner"].CFrame = game.Workspace.Part.CFrame
+    nlMisc:addButton("Collect Light Karma Chest", function()
+        chestRemote:InvokeServer("Light Karma Chest")
     end)
 
-    nlMisc:addButton("Collect Dark Karma Chests", function()
-        game:GetService("Workspace").evilKarmaChest["circleInner"].CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-        wait(5)
-        game:GetService("Workspace").evilKarmaChest["circleInner"].CFrame = game.Workspace.Part.CFrame
+    nlMisc:addButton("Collect Dark Karma Chest", function()
+        chestRemote:InvokeServer("Evil Karma Chest")
+        wait(3)
     end)
 end
 
