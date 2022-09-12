@@ -76,15 +76,11 @@ if game.PlaceId == 3956818381 then
     end)
 
     nlAutoBuy:addToggle("Auto Buy Ranks", false, function(nlAutoBuyRanks)
-        print("Function called")
         getgenv().buyrank = nlAutoBuyRanks
         while true do
-            print("Enterd while")
             if not getgenv().buyrank then return end
-            print("Buyed")
             local A_1 = "buyRank"
             local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            if Event then print("Event found!") end
             Event:FireServer(A_1)
             wait(0.5)
         end
