@@ -190,6 +190,51 @@ if game.PlaceId == 3956818381 then
     end)
 end
 
+-- prison life
+if game.PlaceId == 155615604 then
+    local prisonlifepage = novus:addPage("Prison Life", 5012544693)
+
+    local plgivegun = prisonlifepage:addSection("Gun Giver")
+
+    plgivegun:addDropdown("Select Gun to give yourself", {"M9", "Remington 870", "AK-47"}, function(v)
+    local A_1 = game:GetService("Workspace")["Prison_ITEMS"].giver[v].ITEMPICKUP
+    local Event = game:GetService("Workspace").Remote.ItemHandler
+    Event:InvokeServer(A_1)
+    end)
+
+    local plopgun = prisonlifepage:addSection("OP Gun")
+
+    plopgun:addDropdown("Select Gun to make OP", {"M9", "Remington 870", "AK-47"}, function(v)
+        local module = nil
+        if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(v) then
+            module = require(game:GetService("Players").LocalPlayer.Backpack[v].GunStates)
+        elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild(v) then
+            module = require(game:GetService("Players").LocalPlayer.Character[v].GunStates)
+        end
+        if module ~= nil then
+            module["MaxAmmo"] = math.huge
+            module["CurrentAmmo"] = math.huge
+            module["StoredAmmo"] = math.huge
+            module["FireRate"] = 0.000001
+            module["Spread"] = 0
+            module["Range"] = math.huge
+            module["Bullets"] = 10
+            module["ReloadTime"] = 0.000001
+            module["AutoFire"] = true
+        end
+    end)
+
+    local plteleport = prisonlifepage:addSection("Teleport")
+
+    plteleport:addButton("Cell Block", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(917.3862915039062, 99.98997497558594, 2439.28662109375)
+    end)
+
+    plteleport:addButton("Criminal Base", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-943.9027709960938, 94.1287612915039, 2056.36279296875)
+    end)
+end
+
 -- player page
 local playerPage = novus:addPage("Player", 5012544693)
 
