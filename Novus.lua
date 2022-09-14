@@ -20,28 +20,26 @@ if game.PlaceId == 3956818381 then
     
     local nlAutoFarm = ninjaLegendsPage:addSection("Auto Farm")
    
+    local ninjaEvent = game:GetService("Players").LocalPlayer.ninjaEvent
     nlAutoFarm:addToggle("AutoSwing", false, function(nlAutoSwing)
+        local eventName = "swingKatana"
         -- nl stands for Ninja Legends
         getgenv().autoswing = nlAutoSwing
-        while true do
-            if not getgenv().autoswing then return end
-            for _,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        while getgenv().autoswing do
+            for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
                 if v:FindFirstChild("ninjitsuGain") then
                     game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
                     break
                 end
             end
-            local A_1 = "swingKatana"
-            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1)
+            ninjaEvent:FireServer(eventName)
             wait()
         end
     end)
 
-    nlAutoFarm:addToggle("AutoSell", false, function(nlAutoSell)
-        getgenv().autosell = nlAutoSell
-        while true do
-            if getgenv().autosell == false then return end
+    nlAutoFarm:addToggle("AutoSell", false, function(state)
+        getgenv().autosell = state
+        while getgenv().autosell do
             game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
             wait(0.1)
             game:GetService("Workspace").sellAreaCircles["sellAreaCircle16"].circleInner.CFrame = CFrame.new(0,0,0)
@@ -52,61 +50,56 @@ if game.PlaceId == 3956818381 then
     local nlAutoBuy = ninjaLegendsPage:addSection("Auto Buy")
     local bestIsland = "Blazing Vortex Island"
 
-    nlAutoBuy:addToggle("Auto Buy Swords", false, function(nlAutoBuySwords)
-        getgenv().buyswords = nlAutoBuySwords
-        while true do
-            if not getgenv().buyswords then return end
-            local A_1 = "buyAllSwords"
-            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1, bestIsland)
+    nlAutoBuy:addToggle("Auto Buy Swords", false, function(state)
+        local eventName = "buyAllSwords"
+        getgenv().buyswords = state
+        while getgenv().buyswords do
+            ninjaEvent:FireServer(eventName, bestIsland)
             wait(0.5)
         end
     end)
 
-    nlAutoBuy:addToggle("Auto Buy Belts", false, function(nlAutoBuyBelts)
-        getgenv().buybelts = nlAutoBuyBelts
-        while true do
-            if not getgenv().buybelts then return end
-            local A_1 = "buyAllBelts"
-            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1, bestIsland)
+    nlAutoBuy:addToggle("Auto Buy Belts", false, function(state)
+        local eventName = "buyAllBelts"
+        getgenv().buybelts = state
+        while getgenv().buybelts do
+            ninjaEvent:FireServer(eventName, bestIsland)
             wait(0.5)
         end
     end)
 
-    nlAutoBuy:addToggle("Auto Buy Skills", false, function(nlAutoBuySkills)
-        getgenv().buyskills = nlAutoBuySkills
-        while true do
-            if not getgenv().buyskills then return end
-            local A_1 = "buyAllSkills"
-            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1, bestIsland)
+    nlAutoBuy:addToggle("Auto Buy Skills", false, function(state)
+        getgenv().buyskills = state
+        local eventName = "buyAllSkills"
+        while getgenv().buyskills do
+            ninjaEvent:FireServer(eventName, bestIsland)
             wait(0.5)
         end
     end)
 
-    nlAutoBuy:addToggle("Auto Buy Ranks", false, function(nlAutoBuyRanks)
-        getgenv().buyrank = nlAutoBuyRanks
-        while true do
-            if not getgenv().buyrank then return end
-            local A_1 = "buyRank"
-            local Event = game:GetService("Players").LocalPlayer.ninjaEvent
-            Event:FireServer(A_1)
-            wait(0.5)
+    nlAutoBuy:addToggle("Auto Buy Ranks", false, function(state)
+        ranks = game:GetService("ReplicatedStorage"):WaitForChild("Ranks"):WaitForChild("Ground"):GetChildren()
+        local eventName = "buyRank"
+        getgenv().buyrank = state
+        while getgenv().buyrank do
+            for i, rank in pairs(ranks) do
+                ninjaEvent:FireServer(eventName, rank.Name)
+                wait(0.2)
+            end  
         end
     end)
     
     local nlAutoHatch = ninjaLegendsPage:addSection("Auto Hatch")
     
     nlAutoHatch:addToggle("Auto Hatch Infinity Void Crystal", false, function(state)
-        while true do
-            if state == false then return end
-            local openCrystalRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
-            local autoEvolveRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote")
+        local openCrystalRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openCrystalRemote")
+        local autoEvolveRemote = game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote")
+        getgenv().autohatch = state
+        while getgenv().autohatch do
             openCrystalRemote:InvokeServer("openCrystal", "Infinity Void Crystal")
-            wait(0.2)
-            remoteAutoEvolve:InvokeServer("autoEvolvePets")
-            wait(0.2)
+            wait(1.5)
+            autoEvolveRemote:InvokeServer("autoEvolvePets")
+            wait(1.5)
         end
     end)
     
@@ -123,37 +116,69 @@ if game.PlaceId == 3956818381 then
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.islandUnlockParts[island].islandSignPart.CFrame
     end)
 
-    nlTeleport:addButton("Mystical Waters (Good)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(347.74881, 8824.53809, 114.271019)
+
+    local lightIslands =
+    {["Mystical Waters"]={347.74, 8824.53, 114.27},
+    ["Sword of Legends"]={1834.15, 38.70, -141.37},
+    ["Elemental Tornado"]={299.75, 30383.09, -90.15},
+    ["Zen Master's Blade"]={5044.94, 49.08, 1618.46}}
+
+    local darkIslands =
+    {["Lava Pit"]={-116.63, 12952.53, 271.14},
+    ["Tornado"]={325.64, 16872.09, -9.99},
+    ["Swords of Ancients"]={648.36, 38.70, 2409.72},
+    ["Fallen Infinity Blade"]={1875.94, 39.43, -6805.74}}
+
+    local lightIslandsNames = {}
+    local darkIslandsNames = {}
+
+    local function insertNames(fromTable, toTable)
+        for name, _ in pairs(fromTable) do
+            table.insert(toTable, name)
+        end
+    end
+
+    insertNames(lightIslands, lightIslandsNames)
+    insertNames(darkIslands, darkIslandsNames)
+
+    x = nil
+    y = nil 
+    z = nil
+
+    local function tpToKarmaIsland(fromTable, islandName)
+        for name, table in pairs(fromTable) do
+            if name == islandName then
+                for _, coord in pairs(table) do
+                    print("Entered for 2")
+                    if x == nil then
+                        x = coord
+                    elseif x ~= nil and y == nil then
+                        y = coord
+                    else
+                        z = coord
+                    end
+                end
+            end
+        end
+    end
+
+    nlTeleport:addDropdown("Select Light Karma Island", lightIslandsNames, function(islandName)
+        tpToKarmaIsland(lightIslands, islandName)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(x, y ,z)
+        x = nil
+        y = nil
+        z = nil
     end)
+
+    nlTeleport:addDropdown("Select Dark Karma Island", darkIslandsNames, function(islandName)
+        tpToKarmaIsland(darkIslands, islandName)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(x, y ,z)
+        x = nil
+        y = nil
+        z = nil
+    end)    
     
-    nlTeleport:addButton("Sword of Legends (Good)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1834.15967, 38.704483, -141.375641)
-    end)
-    nlTeleport:addButton("Elemental Tornado (Good)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(299.758484, 30383.0957, -90.1542206)
-    end)
 
-    nlTeleport:addButton("Zen Masters Blade (Good)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(5044.94384765625, 49.08012008666992, 1618.461181640625)             
-    end)
-
-    nlTeleport:addButton("Lava Pit (Bad)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-116.631485, 12952.5381, 271.14624)
-    end)
-        
-    nlTeleport:addButton("Tornado (Bad)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(325.641174, 16872.0938, -9.9906435)
-    end)
-        
-    nlTeleport:addButton("Swords Of Ancients (Bad)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(648.365662, 38.704483, 2409.72266)
-    end)
-
-    nlTeleport:addButton("Fallen Infinity Blade (Bad)", function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1875.9486083984375, 39.43470001220703, -6805.74267578125)
-    end)
-    
     local nlMisc = ninjaLegendsPage:addSection("Misc")
 
     nlMisc:addButton("Unlock Islands", function()
@@ -211,7 +236,7 @@ if game.PlaceId == 155615604 then
         elseif game:GetService("Players").LocalPlayer.Character:FindFirstChild(v) then
             module = require(game:GetService("Players").LocalPlayer.Character[v].GunStates)
         end
-        if module ~= nil then
+        if module then
             module["MaxAmmo"] = math.huge
             module["CurrentAmmo"] = math.huge
             module["StoredAmmo"] = math.huge
