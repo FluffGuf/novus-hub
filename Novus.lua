@@ -78,17 +78,57 @@ if game.PlaceId == 3956818381 then
     end)
 
     nlAutoBuy:addToggle("Auto Buy Ranks", false, function(state)
-        ranks = game:GetService("ReplicatedStorage"):WaitForChild("Ranks"):WaitForChild("Ground"):GetChildren()
+        local ranks = game:GetService("ReplicatedStorage"):WaitForChild("Ranks"):WaitForChild("Ground"):GetChildren()
+        local ownedRanks = game:GetService("Players").LocalPlayer:WaitForChild("ownedRanks"):GetChildren()
         local eventName = "buyRank"
         getgenv().buyrank = state
         while getgenv().buyrank do
-            for i, rank in pairs(ranks) do
+            for _, rank in pairs(ranks) do
+                for _, ownedRank in pairs(ownedRanks) do
+                    if ownedRank.Name == rank.Name then break end
+                end
                 ninjaEvent:FireServer(eventName, rank.Name)
-                wait(0.2)
+                wait(1)
             end  
         end
     end)
+
+
+    local nlAutoBuyKarmaSkills = ninjaLegendsPage:addSection("Auto Buy Karma Skills")
+
+    local function buyKarmaSkills(karmaSkills, ownedKarmaSkills, eventName)
+        for _, karmaSkill in pairs(karmaSkills) do
+            for _, ownedKarmaSkill in pairs(ownedKarmaSkills) do
+                if ownedKarmaSkill.Name == karmaSkill.Name then break end
+            end
+            ninjaEvent:FireServer(eventName, karmaSkill.Name)
+            wait(1.5)
+        end
+    end
+
+    nlAutoBuyKarmaSkills:addToggle("Auto Buy Light Skills", false, function(state)
+        local lightSkills = game:GetService("ReplicatedStorage"):WaitForChild("Light Skills"):WaitForChild("Ground"):GetChildren()
+        local ownedLightSkills = game:GetService("Players").LocalPlayer:WaitForChild("ownedLightSkills"):GetChildren()
+        local eventName = "buyLightSkill"
+       
+        getgenv().buylightskill = state
+        while getgenv().buylightskill do
+            buyKarmaSkills(lightSkills, ownedLightSkills, eventName)
+        end
+    end)
+
+    nlAutoBuyKarmaSkills:addToggle("Auto Buy Dark Skills", false, function(state)
+        local darkSkills = game:GetService("ReplicatedStorage"):WaitForChild("Dark Skills"):WaitForChild("Ground"):GetChildren()
+        local ownedDarkSkills = game:GetService("Players").LocalPlayer:WaitForChild("ownedDarkSkills"):GetChildren()
+        local eventName = "buyDarkSkill"
+       
+        getgenv().buydarkskill = state
+        while getgenv().buydarkskill do
+            buyKarmaSkills(darkSkills, ownedDarkSkills, eventName)
+        end
+    end)
     
+
     local nlAutoHatch = ninjaLegendsPage:addSection("Auto Hatch")
     
     nlAutoHatch:addToggle("Auto Hatch Infinity Void Crystal", false, function(state)
@@ -217,19 +257,19 @@ end
 
 -- prison life
 if game.PlaceId == 155615604 then
-    local prisonlifepage = novus:addPage("Prison Life", 5012544693)
+    local prisonLifePage = novus:addPage("Prison Life", 5012544693)
 
-    local plgivegun = prisonlifepage:addSection("Gun Giver")
+    local plGiveGun = prisonLifePage:addSection("Gun Giver")
 
-    plgivegun:addDropdown("Select Gun to give yourself", {"M9", "Remington 870", "AK-47"}, function(v)
+    plGiveGun:addDropdown("Select Gun to give yourself", {"M9", "Remington 870", "AK-47"}, function(v)
     local A_1 = game:GetService("Workspace")["Prison_ITEMS"].giver[v].ITEMPICKUP
     local Event = game:GetService("Workspace").Remote.ItemHandler
     Event:InvokeServer(A_1)
     end)
 
-    local plopgun = prisonlifepage:addSection("OP Gun")
+    local plOpGun = prisonLifePage:addSection("OP Gun")
 
-    plopgun:addDropdown("Select Gun to make OP", {"M9", "Remington 870", "AK-47"}, function(v)
+    plOpGun:addDropdown("Select Gun to make OP", {"M9", "Remington 870", "AK-47"}, function(v)
         local module = nil
         if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(v) then
             module = require(game:GetService("Players").LocalPlayer.Backpack[v].GunStates)
@@ -249,13 +289,13 @@ if game.PlaceId == 155615604 then
         end
     end)
 
-    local plteleport = prisonlifepage:addSection("Teleport")
+    local plTeleport = prisonLifePage:addSection("Teleport")
 
-    plteleport:addButton("Cell Block", function()
+    plTeleport:addButton("Cell Block", function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(917.3862915039062, 99.98997497558594, 2439.28662109375)
     end)
 
-    plteleport:addButton("Criminal Base", function()
+    plTeleport:addButton("Criminal Base", function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-943.9027709960938, 94.1287612915039, 2056.36279296875)
     end)
 end
