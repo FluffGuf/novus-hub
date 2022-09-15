@@ -436,10 +436,32 @@ movement:addSlider("JumpPower", 50, 50, 500, function(jp)
     humanoid.JumpPower = jp
 end)
 
-movement:addToggle("Fly", function()
+movement:addToggle("Fly", false, function()
 end)
 
-movement:addToggle("NoClip")
+local isNoClipping = false
+local character = game.Players.LocalPlayer.Character
+local runService = game:GetService("RunService")
+
+runService.Stepped:Connect(function()
+    if character then
+        if isNoClipping then
+            for i,v in pairs(character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+movement:addToggle("NoClip", false, function(state)
+    if isNoClipping then
+        isNoClipping = false
+    else
+        isNoClipping = true
+    end
+end)
 
 local health = playerPage:addSection("Health")
 
