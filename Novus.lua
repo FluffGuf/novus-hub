@@ -300,6 +300,129 @@ if game.PlaceId == 155615604 then
     end)
 end
 
+-- Slime Tower Tycoon
+if game.PlaceId == 10675066724 then
+    
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local RunService = game:GetService("RunService")
+
+    local event = {
+    Merge = game:GetService("ReplicatedStorage").GTycoonClient.Remotes.MergeDroppers,
+    Buy_Dropper = game:GetService("ReplicatedStorage").GTycoonClient.Remotes.BuyDropper,
+    Buy_Speed = game:GetService("ReplicatedStorage").GTycoonClient.Remotes.BuySpeed,
+    Deposit = game:GetService("ReplicatedStorage").GTycoonClient.Remotes.DepositDrops,
+}
+
+    getgenv().Setting = {
+    Grab_slime = false,
+    Merge = false,
+    Buy_Dropper = {boolean = false,unit = 1},
+    Buy_Speed = false,
+    Deposit = false,
+}
+
+    local slimetowertycoon = novus:addPage("Slime Tycoon", 5012544693)
+
+    local sltAutomatics = slimetowertycoon:addSection("Automatics")
+
+    sltAutomatics:addToggle("Auto Collect", false, function(x)
+        getgenv().Setting.Grab_slime = x;
+        if x then
+            Grab_slime()
+        end
+    end)
+
+    sltAutomatics:addToggle("Auto Sell", false, function(x)
+        getgenv().Setting.Deposit = x;
+        if x then
+            Deposit()
+        end
+    end)
+
+    sltAutomatics:addDropdown("Select Slime Unit", {"1","5"}, function(x)
+        getgenv().Setting.Buy_Dropper.unit = x;
+    end)
+
+    sltAutomatics:addToggle("Auto Buy Slime", false, function(x)
+        getgenv().Setting.Buy_Dropper.boolean = x;
+        if x then
+            Buy_Dropper(getgenv().Setting.Buy_Dropper.unit)
+        end
+    end)
+
+    sltAutomatics:addToggle("Auto buy RATE", false, function(x)
+        getgenv().Setting.Buy_Speed = x;
+        if x then
+            Buy_Speed()
+        end
+    end)
+
+    sltAutomatics:addToggle("Auto Merge Slime", false, function(x)
+        getgenv().Setting.Merge = x;
+        if x then
+            Merge()
+        end
+    end)
+
+    function Grab_slime()
+        if LocalPlayer.Character then
+            local hrp = LocalPlayer.Character.HumanoidRootPart
+            for i,v in ipairs(workspace["Drops"]:GetChildren()) do
+                if v:IsA("Part") then
+                    v.CFrame = hrp.CFrame
+                end
+             end
+        end
+        local added;
+        added = workspace["Drops"].ChildAdded:Connect(function(v)
+            task.wait(.2)
+            if v:IsA("Part") and LocalPlayer.Character then
+                local hrp = LocalPlayer.Character.HumanoidRootPart
+                v.CFrame = hrp.CFrame
+            end
+        end)
+        task.spawn(function()
+            while task.wait(.1) do
+                if getgenv().Setting.Grab_slime ~= true then added:Disconnect() break; end
+            end
+        end)
+    end
+    
+    function Deposit()
+        task.spawn(function()
+            while getgenv().Setting.Deposit and task.wait(.1) do
+                event.Deposit:FireServer()
+            end
+        end)
+    end
+    
+    function Buy_Dropper(value)
+        task.spawn(function()
+            while getgenv().Setting.Buy_Dropper.boolean and task.wait(.1) do
+                local v = value or 1
+                event.Buy_Dropper:FireServer(tonumber(v))
+            end
+        end)
+    end
+    
+    function Buy_Speed()
+        task.spawn(function()
+            while getgenv().Setting.Buy_Speed and task.wait(.1) do
+                event.Buy_Speed:FireServer(1)
+            end
+        end)
+    end
+    
+    function Merge()
+        task.spawn(function()
+            while getgenv().Setting.Merge and task.wait(.1) do
+                event.Merge:FireServer()
+            end
+        end)
+    end
+end
+
 -- player page
 local playerPage = novus:addPage("Player", 5012544693)
 
