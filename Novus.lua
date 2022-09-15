@@ -351,7 +351,7 @@ if game.PlaceId == 10675066724 then
         end
     end)
 
-    sltAutomatics:addToggle("Auto buy RATE", false, function(x)
+    sltAutomatics:addToggle("Auto Buy Rate", false, function(x)
         getgenv().Setting.Buy_Speed = x;
         if x then
             Buy_Speed()
