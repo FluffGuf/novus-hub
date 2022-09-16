@@ -2,7 +2,9 @@
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
 local novus = library.new("Novus Hub", 5013109572)
 
---require("try-catch")
+local runService = game:GetService("RunService")
+local character = game.Players.LocalPlayer.Character
+
 
 -- themes
 local themes = {
@@ -340,7 +342,7 @@ if game.PlaceId == 10675066724 then
         end
     end)
 
-    sltAutomatics:addDropdown("Select Slime Unit", {"1","5"}, function(x)
+    sltAutomatics:addDropdown("Select Slime Unit", {"1", "5", "25", "50"}, function(x)
         getgenv().Setting.Buy_Dropper.unit = x;
     end)
 
@@ -433,17 +435,14 @@ movement:addSlider("WalkSpeed", 16, 16, 500, function(ws)
 end)  
 
 movement:addSlider("JumpPower", 50, 50, 500, function(jp)
-    humanoid.JumpPower = jp
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = jp
 end)
 
-movement:addToggle("Fly", false, function()
-end)
 
 local isNoClipping = false
-local character = game.Players.LocalPlayer.Character
-local runService = game:GetService("RunService")
 
 runService.Stepped:Connect(function()
+    character = game.Players.LocalPlayer.Character
     if character then
         if isNoClipping then
             for i,v in pairs(character:GetDescendants()) do
@@ -463,22 +462,188 @@ movement:addToggle("NoClip", false, function(state)
     end
 end)
 
+
+-- FLY
+
+local flyPage = playerPage:addSection("Fly")
+
+
+local contextActionService = game:GetService("ContextActionService")
+local connection = nil
+local primaryPart = character.PrimaryPart
+local gravityVector = Vector3.new(0, game.Workspace.Gravity, 0)
+local yAxis = 0
+local force = 3000
+local forceCurve = 0.44
+local drag = 222
+local playerName = game:GetService("Players").LocalPlayer.Name
+local flyON = false
+
+-- creating Force
+local vectorForce = Instance.new("VectorForce", game.Workspace)
+vectorForce.Enabled = false
+vectorForce.Force = Vector3.new(0, 0, 0)
+vectorForce.RelativeTo = "World"
+vectorForce.Attachment0 = primaryPart.RootRigAttachment
+
+-- creating Align Orientation
+local alignOrientation = Instance.new("AlignOrientation", game.Workspace)
+alignOrientation.Enabled = false
+alignOrientation.Mode = "OneAttachment"
+alignOrientation.MaxTorque = 179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368
+alignOrientation.Responsiveness = 30
+alignOrientation.Attachment0 = primaryPart.RootRigAttachment
+
+
+-- making custom attachment
+
+local attachment0 = Instance.new("Attachment")
+attachment0.Position = Vector3.new(-2 ,0, 0)
+attachment0.Parent = character:WaitForChild("LowerTorso")
+
+local attachment1 = Instance.new("Attachment")
+attachment1.Position = Vector3.new(2, 0, 0)
+attachment1.Parent = character:WaitForChild("LowerTorso")
+
+-- creating Trail
+local trail = Instance.new("Trail", game.Workspace)
+trail.FaceCamera = true
+trail.Transparency = NumberSequence.new{
+    NumberSequenceKeypoint.new(0, 1),
+    NumberSequenceKeypoint.new(0.05, 0.5),
+    NumberSequenceKeypoint.new(1, 1)
+}
+trail.Enabled = false
+trail.Lifetime = 1
+trail.WidthScale = NumberSequence.new{
+    NumberSequenceKeypoint.new(0, 0.75),
+    NumberSequenceKeypoint.new(0.05, 1),
+    NumberSequenceKeypoint.new(1, 0.5)
+}
+
+trail.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(0.05, Color3.fromRGB(129, 255, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(75, 231, 255)),
+    ColorSequenceKeypoint.new(0.75, Color3.fromRGB(51, 81, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(171, 138, 255))
+}
+
+trail.Attachment0 = attachment0
+trail.Attachment1 = attachment1
+
+
+local function FlyAction(actionName, inputState, inputObject)
+    if inputState ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
+    if flyON == false then return Enum.ContextActionResult.Pass end
+    if connection == true then return Enum.ContextActionResult.Pass end
+    if connection == nil then
+        connection = true
+        if character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+            character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            task.wait(0.1)
+        end
+
+        character = game:GetService("Players").LocalPlayer.Character
+        primaryPart = character.PrimaryPart
+        vectorForce.Attachment0 = primaryPart.RootRigAttachment
+        alignOrientation.Attachment0 = primaryPart.RootRigAttachment
+        attachment0.Parent = character:WaitForChild("LowerTorso")
+        attachment1.Parent = character:WaitForChild("LowerTorso")
+        trail.Attachment0 = attachment0
+        trail.Attachment1 = attachment1
+        vectorForce.Enabled = true
+        alignOrientation.CFrame = primaryPart.CFrame
+        alignOrientation.Enabled = true
+        trail.Enabled = true
+
+        character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+        connection = runService.Heartbeat:Connect(function(deltaTime)
+            vectorForce.Force = gravityVector * primaryPart.AssemblyMass
+            local moveVector = Vector3.new(character.Humanoid.MoveDirection.X, yAxis, character.Humanoid.MoveDirection.Z)
+            if moveVector.Magnitude > 0 then
+                moveVector = moveVector.Unit
+                vectorForce.Force += moveVector * force * primaryPart.AssemblyMass
+                if math.abs(moveVector.Y) == 1 then
+                    alignOrientation.CFrame = CFrame.lookAt(Vector3.new(0, 0, 0), moveVector, -primaryPart.CFrame.LookVector) * CFrame.fromOrientation(-math.pi /2, 0, 0)
+                else
+                    alignOrientation.CFrame = CFrame.lookAt(Vector3.new(0, 0, 0), moveVector) * CFrame.fromOrientation(-math.pi /2, 0, 0)
+                end
+            end
+            if primaryPart.AssemblyLinearVelocity.Magnitude > 0 then
+                local dragVector = -primaryPart.AssemblyLinearVelocity.Unit * primaryPart.AssemblyLinearVelocity.Magnitude ^ forceCurve
+                vectorForce.Force += dragVector * drag * primaryPart.AssemblyMass
+            end
+        end)
+    else
+        vectorForce.Enabled = false
+        alignOrientation.Enabled = false
+        trail.Enabled = false
+        character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+        connection:Disconnect()
+        connection = nil
+    end
+    return Enum.ContextActionResult.Pass
+end
+
+local function UpAction(actionName, inputState, inputObject)
+    if inputState == Enum.UserInputState.Begin then yAxis = 1 else yAxis = 0 end
+    return Enum.ContextActionResult.Pass
+end
+
+local function DownAction(actionName, inputState, inputObject)
+    if inputState == Enum.UserInputState.Begin then yAxis = -1 else yAxis = 0 end
+    return Enum.ContextActionResult.Pass
+end
+
+contextActionService:BindAction("Fly", FlyAction, true, Enum.KeyCode.B)
+
+contextActionService:BindAction("Up", UpAction, true, Enum.KeyCode.Space)
+
+contextActionService:BindAction("Down", DownAction, true, Enum.KeyCode.LeftShift)
+
+
+
+local function stopFly()
+    flyON = false
+    vectorForce.Enabled = false
+    alignOrientation.Enabled = false
+    trail.Enabled = false
+    character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+    connection:Disconnect()
+    connection = nil
+end
+
+
+flyPage:addToggle("Fly (Press B)", false, function(state)
+    if state then
+        flyON = true
+    else
+        stopFly()
+    end
+end)
+
+flyPage:addSlider("Fly Speed", 3000, 2000, 5000, function(value)
+    force = value
+end)
+
+
 local health = playerPage:addSection("Health")
 
 health:addButton("Heal", function()
     game.Players.LocalPlayer.Character.Humanoid.Health = game.Players.LocalPlayer.Character.Humanoid.MaxHealth
 end)
 
-local RunService = game:GetService("RunService")
+
 local humanoid = game.Players.LocalPlayer.Character.Humanoid
 
 health:addToggle("Godmode", false, function(v)
     if v then
-        RunService.Heartbeat:Connect(function()
+        runService.Heartbeat:Connect(function()
             humanoid.Health = humanoid.MaxHealth
         end)
     else
-        RunService.Heartbeat:Disconnect()
+        runService.Heartbeat:Disconnect()
     end
 end)
 
@@ -505,14 +670,13 @@ local keybinds = settings:addSection("Keybinds")
 local more = settings:addSection("More")
 
 for theme, color in pairs(themes) do -- all in one theme changer
-	colors:addColorPicker(theme, color, function(color3)
-		novus:setTheme(theme, color3)
-	end)
+    colors:addColorPicker(theme, color, function(color3)
+        novus:setTheme(theme, color3)
+    end)
 end
 
 keybinds:addKeybind("Toggle Keybind", Enum.KeyCode.PageDown, function()
-	novus:toggle()
-end, function()
+    novus:toggle() end, function()
 end)
 
 more:addButton("Close UI", function()

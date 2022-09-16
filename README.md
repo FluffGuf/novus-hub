@@ -18,15 +18,15 @@
 
 #### [Slime Tower Tycoon](https://web.roblox.com/games/10675066724/Slime-Tower-Tycoon-NEW):
 
-- **Automatics:** Auto Collect Slime Orbs, Auto Sell, Auto Buy Slimes (1 or 5), Auto Buy Rate, Auto Merge Slimes
+- **Automatics:** Auto Collect Slime Orbs, Auto Sell, Auto Buy Slimes (1 , 5, 25 or 50), Auto Buy Rate, Auto Merge Slimes
 
 ### Other features are:
 
 #### Player:
 
-- **Movement:** WalkSpeed, JumpPower, Fly (not done yet), NoClip (not done yet)
+- **Movement:** WalkSpeed, JumpPower, Fly , NoClip 
 - **Health:** Heal, Godmode
-##### (some of these may not work in every game)
+##### (some of these features may not work in every game)
 
 #### Extra:
 
@@ -35,7 +35,7 @@
 #### Settings:
 
 - **Colors:** DarkContrast, Glow, Light Contrast, Background, TextColor, Accent
-- **Keybinds:** Toggle Keybind (toggles the UI, that means it hides or show the UI when pressed, current is PageDown)
+- **Keybinds:** Toggle Keybind (toggles the UI, that means it hides or shows the UI when pressed, current is PageDown)
 - **More:** Close UI (Closes the UI completly, so you will have to execute the script again to get it back)
 
 
