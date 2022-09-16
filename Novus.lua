@@ -546,40 +546,39 @@ if game.PlaceId == 285291913 then
     removeEsp(plr.Name)
         end)
     end)
-end
+    Ragdolls.ChildAdded:Connect(function(body)
+    local cd = body:WaitForChild("CorpseData")
+    local tm = cd:WaitForChild("Team")
+    local killer = cd:WaitForChild("KilledBy")
+    removeEsp(body.Name)
+    if tm.Value == "Innocent" then
+    if workspace:findFirstChild(killer.Value) then
+    local espparts = game.CoreGui:GetChildren()
+    for i = 1, #espparts do
+    if espparts[i].Name == tostring(killer.Value) and espparts[i]:IsA("Highlight") then
+    SetColor(espparts[i])
+    end
+    if espparts[i]:IsA("BillboardGui") and espparts[i].TextLabel.Text == tostring(killer.Value) then
+    SetTextColor(espparts[i].TextLabel)
+    end
+    end
+    end
+    end
+    if tm.Value == "Traitor" then
+    local espparts = game.CoreGui:GetChildren()
+    for i = 1, #espparts do
+    if espparts[i].Name == tostring(killer.Value) and espparts[i]:IsA("Highlight") then
+    espparts[i].FillColor = Color3.fromRGB(0,255,0)
+    end
 
-Ragdolls.ChildAdded:Connect(function(body)
-local cd = body:WaitForChild("CorpseData")
-local tm = cd:WaitForChild("Team")
-local killer = cd:WaitForChild("KilledBy")
-removeEsp(body.Name)
-if tm.Value == "Innocent" then
-if workspace:findFirstChild(killer.Value) then
-local espparts = game.CoreGui:GetChildren()
-for i = 1, #espparts do
-if espparts[i].Name == tostring(killer.Value) and espparts[i]:IsA("Highlight") then
-SetColor(espparts[i])
-end
-if espparts[i]:IsA("BillboardGui") and espparts[i].TextLabel.Text == tostring(killer.Value) then
-SetTextColor(espparts[i].TextLabel)
-end
-end
-end
-end
-if tm.Value == "Traitor" then
-local espparts = game.CoreGui:GetChildren()
-for i = 1, #espparts do
-if espparts[i].Name == tostring(killer.Value) and espparts[i]:IsA("Highlight") then
-espparts[i].FillColor = Color3.fromRGB(0,255,0)
-end
+    if espparts[i]:IsA("BillboardGui") and espparts[i].TextLabel.Text == killer.Value then
+    espparts[i].TextLabel.TextColor3 = Color3.fromRGB(0,255,0)
+    end
 
-if espparts[i]:IsA("BillboardGui") and espparts[i].TextLabel.Text == killer.Value then
-espparts[i].TextLabel.TextColor3 = Color3.fromRGB(0,255,0)
+    end
+    end
+    end)
 end
-
-end
-end
-end)
 
 -- player page
 local playerPage = novus:addPage("Player", 5012544693)
