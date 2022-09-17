@@ -368,25 +368,21 @@ if game.PlaceId == 10675066724 then
     end)
 
     sltAutomatics:addToggle("Auto Finish Obby", false, function(state)
-        getgenv().autoobby = state
-        while getgenv().autoobby do
-            local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-            local plots = game.Workspace.Plots:GetChildren()
+        local portals =
+        {CFrame.new(-350.25, 15.20, -496.26), CFrame.new(-350.19, 15.2, -296.42),
+        CFrame.new(-240.07, 15.20, -304.31), CFrame.new(-350.24, 15.20, -96.03),
+        CFrame.new(-238.66, 15.20, -104.58), CFrame.new(-350.46, 15.20, 103.06),
+        CFrame.new(-238.22, 15.20, 95.36), CFrame.new(-349.19, 15.20, 302.37)}
 
-            for i, v in pairs(plots) do
-                print(v.Name)
-                if v.Dynamic then
-                    for i1, v1 in pairs(v.Dynamic.Portals:GetChildren()) do
-                        if v1.Name == "PortalSign" then
-                            if v1.SurfaceGui.TextLabel.Text == "WIZARD TOWER OBBY" then
-                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v1.CFrame
-                                wait(0.15)
-                            end
-                        end
-                    end
-                end
+
+
+        getgenv().autoObby = state
+        while getgenv().autoObby do
+            for i, v in pairs(portals) do
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v
+                wait(0.07)
             end
-
+            wait(1)
             local checkpoints = {}
             for _, v in pairs(game.Workspace.ObbyCheckpoints:GetChildren()) do
                 table.insert(checkpoints, v.Name)
@@ -396,15 +392,14 @@ if game.PlaceId == 10675066724 then
                 for i, checkpoint in pairs(game.Workspace.ObbyCheckpoints:GetChildren()) do
                     if checkpoint:IsA("Part") and checkpoint.Name == checkpointName then
                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = checkpoint.CFrame
-                        wait(0.8)
+                        wait(0.95)
                     end
                 end
             end
             num = 1
-            wait(0.6)
+            wait(1)
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-160.42, 99.478, -670.58)
-            wait(1.5)
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
+            wait(2)
         end
     end)
 
