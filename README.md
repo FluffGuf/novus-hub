@@ -18,7 +18,8 @@
 
 #### [Slime Tower Tycoon](https://web.roblox.com/games/10675066724/Slime-Tower-Tycoon-NEW):
 
-- **Automatics:** Auto Collect Slime Orbs, Auto Sell, Auto Buy Slimes (1 , 5, 25 or 50), Auto Buy Rate, Auto Merge Slimes
+- **Automatics:** Auto Collect Slime Orbs, Auto Sell, Auto Buy Slimes (1 , 5, 25, 50 or 100), Auto Buy Rate, Auto Merge Slimes
+- **Misc:** Finsish Obby
 
 ### Other features are:
 

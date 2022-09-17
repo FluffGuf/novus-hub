@@ -342,7 +342,7 @@ if game.PlaceId == 10675066724 then
         end
     end)
 
-    sltAutomatics:addDropdown("Select Slime Unit", {"1", "5", "25", "50"}, function(x)
+    sltAutomatics:addDropdown("Select Slime Unit", {"1", "5", "25", "50","100"}, function(x)
         getgenv().Setting.Buy_Dropper.unit = x;
     end)
 
@@ -365,6 +365,15 @@ if game.PlaceId == 10675066724 then
         if x then
             Merge()
         end
+    end)
+
+    local sttMisc = slimetowertycoon:addSection("Misc")
+
+    sttMisc:addButton("Finish Obby", function()
+        local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-154.03277587890625, 91.83457637, -673.01123046875)
+        wait(1.5)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
     end)
 
     function Grab_slime()
