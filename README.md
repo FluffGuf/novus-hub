@@ -24,7 +24,8 @@
 
 #### Player:
 
-- **Movement:** WalkSpeed, JumpPower, Fly , NoClip 
+- **Movement:** WalkSpeed, JumpPower, Fly , NoClip
+- **Teleport:** Teleport to players
 - **Health:** Heal, Godmode
 ##### (some of these features may not work in every game)
 
