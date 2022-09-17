@@ -369,10 +369,18 @@ if game.PlaceId == 10675066724 then
 
     local sttMisc = slimetowertycoon:addSection("Misc")
 
+    checkpoints =
+    {CFrame.new(-315.40, 29.62, -687.42), CFrame.new(-288.90, 56.62, -667.91),
+    CFrame.new(-268.97, 56.40, -688.36), CFrame.new(-310.83, 69.62, -696.38),
+    CFrame.new(-267.06, 85.57, -685.23), CFrame.new(-161.21, 98.542, -671.22)}
+
     sttMisc:addButton("Finish Obby", function()
         local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-154.03277587890625, 91.83457637, -673.01123046875)
-        wait(1.5)
+        for _, v in pairs(checkpoints) do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v
+            wait(0.5)
+        end
+        wait(1)
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
     end)
 
