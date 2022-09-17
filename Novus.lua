@@ -367,21 +367,45 @@ if game.PlaceId == 10675066724 then
         end
     end)
 
-    local sttMisc = slimetowertycoon:addSection("Misc")
+    sltAutomatics:addToggle("Auto Finish Obby", false, function(state)
+        getgenv().autoobby = state
+        while getgenv().autoobby do
+            local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            local plots = game.Workspace.Plots:GetChildren()
 
-    checkpoints =
-    {CFrame.new(-315.40, 29.62, -687.42), CFrame.new(-288.90, 56.62, -667.91),
-    CFrame.new(-268.97, 56.40, -688.36), CFrame.new(-310.83, 69.62, -696.38),
-    CFrame.new(-267.06, 85.57, -685.23), CFrame.new(-161.21, 98.542, -671.22)}
+            for i, v in pairs(plots) do
+                print(v.Name)
+                if v.Dynamic then
+                    for i1, v1 in pairs(v.Dynamic.Portals:GetChildren()) do
+                        if v1.Name == "PortalSign" then
+                            if v1.SurfaceGui.TextLabel.Text == "WIZARD TOWER OBBY" then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v1.CFrame
+                                wait(0.15)
+                            end
+                        end
+                    end
+                end
+            end
 
-    sttMisc:addButton("Finish Obby", function()
-        local oldCFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-        for _, v in pairs(checkpoints) do
-            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v
-            wait(0.5)
+            local checkpoints = {}
+            for _, v in pairs(game.Workspace.ObbyCheckpoints:GetChildren()) do
+                table.insert(checkpoints, v.Name)
+            end
+            table.sort(checkpoints)
+            for _, checkpointName in pairs(checkpoints) do
+                for i, checkpoint in pairs(game.Workspace.ObbyCheckpoints:GetChildren()) do
+                    if checkpoint:IsA("Part") and checkpoint.Name == checkpointName then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = checkpoint.CFrame
+                        wait(0.8)
+                    end
+                end
+            end
+            num = 1
+            wait(0.6)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-160.42, 99.478, -670.58)
+            wait(1.5)
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
         end
-        wait(1)
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = oldCFrame
     end)
 
     function Grab_slime()
