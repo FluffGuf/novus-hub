@@ -466,152 +466,184 @@ local playerPage = novus:addPage("Player", 5012544693)
 
 local movement = playerPage:addSection("Movement")
 
-movement:addSlider("WalkSpeed", 16, 16, 500, function(ws)
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
-end)  
+if game.PlaceId ~= 9872472334 and game.PlaceId ~= 10808838353 then
 
-movement:addSlider("JumpPower", 50, 50, 500, function(jp)
-    game.Players.LocalPlayer.Character.Humanoid.JumpPower = jp
-end)
+    movement:addSlider("WalkSpeed", 16, 16, 500, function(ws)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = ws
+    end)  
+
+    movement:addSlider("JumpPower", 50, 50, 500, function(jp)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = jp
+    end)
 
 
-local isNoClipping = false
+    local isNoClipping = false
 
-runService.Stepped:Connect(function()
-    character = game.Players.LocalPlayer.Character
-    if character then
-        if isNoClipping then
-            for i,v in pairs(character:GetDescendants()) do
-                if v:IsA("BasePart") then
-                    v.CanCollide = false
+    runService.Stepped:Connect(function()
+        character = game.Players.LocalPlayer.Character
+        if character then
+            if isNoClipping then
+                for i,v in pairs(character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
                 end
             end
         end
-    end
-end)
+    end)
 
-movement:addToggle("NoClip", false, function(state)
-    if isNoClipping then
-        isNoClipping = false
-    else
-        isNoClipping = true
-    end
-end)
-
-if game.PlaceId ~= 155615604 then
-    -- FLY
-
-    local flyPage = playerPage:addSection("Fly")
-
-
-    local contextActionService = game:GetService("ContextActionService")
-    local connection = nil
-    local primaryPart = character.PrimaryPart
-    local gravityVector = Vector3.new(0, game.Workspace.Gravity, 0)
-    local yAxis = 0
-    local force = 3000
-    local forceCurve = 0.44
-    local drag = 222
-    local playerName = game:GetService("Players").LocalPlayer.Name
-    local flyON = false
-
-    -- creating Force
-    local vectorForce = Instance.new("VectorForce", game.Workspace)
-    vectorForce.Enabled = false
-    vectorForce.Force = Vector3.new(0, 0, 0)
-    vectorForce.RelativeTo = "World"
-    vectorForce.Attachment0 = primaryPart.RootRigAttachment
-
-    -- creating Align Orientation
-    local alignOrientation = Instance.new("AlignOrientation", game.Workspace)
-    alignOrientation.Enabled = false
-    alignOrientation.Mode = "OneAttachment"
-    alignOrientation.MaxTorque = 179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368
-    alignOrientation.Responsiveness = 30
-    alignOrientation.Attachment0 = primaryPart.RootRigAttachment
-
-
-    -- making custom attachment
-
-    local attachment0 = Instance.new("Attachment")
-    attachment0.Position = Vector3.new(-2 ,0, 0)
-    attachment0.Parent = character:WaitForChild("LowerTorso")
-
-    local attachment1 = Instance.new("Attachment")
-    attachment1.Position = Vector3.new(2, 0, 0)
-    attachment1.Parent = character:WaitForChild("LowerTorso")
-
-    -- creating Trail
-    local trail = Instance.new("Trail", game.Workspace)
-    trail.FaceCamera = true
-    trail.Transparency = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 1),
-        NumberSequenceKeypoint.new(0.05, 0.5),
-        NumberSequenceKeypoint.new(1, 1)
-    }
-    trail.Enabled = false
-    trail.Lifetime = 1
-    trail.WidthScale = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 0.75),
-        NumberSequenceKeypoint.new(0.05, 1),
-        NumberSequenceKeypoint.new(1, 0.5)
-    }
-
-    trail.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(0.05, Color3.fromRGB(129, 255, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(75, 231, 255)),
-        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(51, 81, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(171, 138, 255))
-    }
-
-    trail.Attachment0 = attachment0
-    trail.Attachment1 = attachment1
-
-
-    local function FlyAction(actionName, inputState, inputObject)
-        if inputState ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
-        if flyON == false then return Enum.ContextActionResult.Pass end
-        if connection == true then return Enum.ContextActionResult.Pass end
-        if connection == nil then
-            connection = true
-            if character.Humanoid.FloorMaterial ~= Enum.Material.Air then
-                character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                task.wait(0.1)
-            end
-
-            character = game:GetService("Players").LocalPlayer.Character
-            primaryPart = character.PrimaryPart
-            vectorForce.Attachment0 = primaryPart.RootRigAttachment
-            alignOrientation.Attachment0 = primaryPart.RootRigAttachment
-            attachment0.Parent = character:WaitForChild("LowerTorso")
-            attachment1.Parent = character:WaitForChild("LowerTorso")
-            trail.Attachment0 = attachment0
-            trail.Attachment1 = attachment1
-            vectorForce.Enabled = true
-            alignOrientation.CFrame = primaryPart.CFrame
-            alignOrientation.Enabled = true
-            trail.Enabled = true
-
-            character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-            connection = runService.Heartbeat:Connect(function(deltaTime)
-                vectorForce.Force = gravityVector * primaryPart.AssemblyMass
-                local moveVector = Vector3.new(character.Humanoid.MoveDirection.X, yAxis, character.Humanoid.MoveDirection.Z)
-                if moveVector.Magnitude > 0 then
-                    moveVector = moveVector.Unit
-                    vectorForce.Force += moveVector * force * primaryPart.AssemblyMass
-                    if math.abs(moveVector.Y) == 1 then
-                        alignOrientation.CFrame = CFrame.lookAt(Vector3.new(0, 0, 0), moveVector, -primaryPart.CFrame.LookVector) * CFrame.fromOrientation(-math.pi /2, 0, 0)
-                    else
-                        alignOrientation.CFrame = CFrame.lookAt(Vector3.new(0, 0, 0), moveVector) * CFrame.fromOrientation(-math.pi /2, 0, 0)
-                    end
-                end
-                if primaryPart.AssemblyLinearVelocity.Magnitude > 0 then
-                    local dragVector = -primaryPart.AssemblyLinearVelocity.Unit * primaryPart.AssemblyLinearVelocity.Magnitude ^ forceCurve
-                    vectorForce.Force += dragVector * drag * primaryPart.AssemblyMass
-                end
-            end)
+    movement:addToggle("NoClip", false, function(state)
+        if isNoClipping then
+            isNoClipping = false
         else
+            isNoClipping = true
+        end
+    end)
+
+    if game.PlaceId ~= 155615604 then
+        -- FLY
+
+        local flyPage = playerPage:addSection("Fly")
+
+
+        local contextActionService = game:GetService("ContextActionService")
+        local connection = nil
+        local primaryPart = character.PrimaryPart
+        local gravityVector = Vector3.new(0, game.Workspace.Gravity, 0)
+        local yAxis = 0
+        local force = 3000
+        local forceCurve = 0.44
+        local drag = 222
+        local playerName = game:GetService("Players").LocalPlayer.Name
+        local flyON = false
+
+        -- creating Force
+        local vectorForce = Instance.new("VectorForce", game.Workspace)
+        vectorForce.Enabled = false
+        vectorForce.Force = Vector3.new(0, 0, 0)
+        vectorForce.RelativeTo = "World"
+        vectorForce.Attachment0 = primaryPart.RootRigAttachment
+
+        -- creating Align Orientation
+        local alignOrientation = Instance.new("AlignOrientation", game.Workspace)
+        alignOrientation.Enabled = false
+        alignOrientation.Mode = "OneAttachment"
+        alignOrientation.MaxTorque = 179769313486231570814527423731704356798070567525844996598917476803157260780028538760589558632766878171540458953514382464234321326889464182768467546703537516986049910576551282076245490090389328944075868508455133942304583236903222948165808559332123348274797826204144723168738177180919299881250404026184124858368
+        alignOrientation.Responsiveness = 30
+        alignOrientation.Attachment0 = primaryPart.RootRigAttachment
+
+
+        -- making custom attachment
+
+        local attachment0 = Instance.new("Attachment")
+        attachment0.Position = Vector3.new(-2 ,0, 0)
+        attachment0.Parent = character:WaitForChild("LowerTorso")
+
+        local attachment1 = Instance.new("Attachment")
+        attachment1.Position = Vector3.new(2, 0, 0)
+        attachment1.Parent = character:WaitForChild("LowerTorso")
+
+        -- creating Trail
+        local trail = Instance.new("Trail", game.Workspace)
+        trail.FaceCamera = true
+        trail.Transparency = NumberSequence.new{
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0.05, 0.5),
+            NumberSequenceKeypoint.new(1, 1)
+        }
+        trail.Enabled = false
+        trail.Lifetime = 1
+        trail.WidthScale = NumberSequence.new{
+            NumberSequenceKeypoint.new(0, 0.75),
+            NumberSequenceKeypoint.new(0.05, 1),
+            NumberSequenceKeypoint.new(1, 0.5)
+        }
+
+        trail.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+            ColorSequenceKeypoint.new(0.05, Color3.fromRGB(129, 255, 255)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(75, 231, 255)),
+            ColorSequenceKeypoint.new(0.75, Color3.fromRGB(51, 81, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(171, 138, 255))
+        }
+
+        trail.Attachment0 = attachment0
+        trail.Attachment1 = attachment1
+
+
+        local function FlyAction(actionName, inputState, inputObject)
+            if inputState ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
+            if flyON == false then return Enum.ContextActionResult.Pass end
+            if connection == true then return Enum.ContextActionResult.Pass end
+            if connection == nil then
+                connection = true
+                if character.Humanoid.FloorMaterial ~= Enum.Material.Air then
+                    character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    task.wait(0.1)
+                end
+
+                character = game:GetService("Players").LocalPlayer.Character
+                primaryPart = character.PrimaryPart
+                vectorForce.Attachment0 = primaryPart.RootRigAttachment
+                alignOrientation.Attachment0 = primaryPart.RootRigAttachment
+                attachment0.Parent = character:WaitForChild("LowerTorso")
+                attachment1.Parent = character:WaitForChild("LowerTorso")
+                trail.Attachment0 = attachment0
+                trail.Attachment1 = attachment1
+                vectorForce.Enabled = true
+                alignOrientation.CFrame = primaryPart.CFrame
+                alignOrientation.Enabled = true
+                trail.Enabled = true
+
+                character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+                connection = runService.Heartbeat:Connect(function(deltaTime)
+                    vectorForce.Force = gravityVector * primaryPart.AssemblyMass
+                    local moveVector = Vector3.new(character.Humanoid.MoveDirection.X, yAxis, character.Humanoid.MoveDirection.Z)
+                    if moveVector.Magnitude > 0 then
+                        moveVector = moveVector.Unit
+                        vectorForce.Force += moveVector * force * primaryPart.AssemblyMass
+                        if math.abs(moveVector.Y) == 1 then
+                            alignOrientation.CFrame = CFrame.lookAt(Vector3.new(0, 0, 0), moveVector, -primaryPart.CFrame.LookVector) * CFrame.fromOrientation(-math.pi /2, 0, 0)
+                        else
+                            alignOrientation.CFrame = CFrame.lookAt(Vector3.new(0, 0, 0), moveVector) * CFrame.fromOrientation(-math.pi /2, 0, 0)
+                        end
+                    end
+                    if primaryPart.AssemblyLinearVelocity.Magnitude > 0 then
+                        local dragVector = -primaryPart.AssemblyLinearVelocity.Unit * primaryPart.AssemblyLinearVelocity.Magnitude ^ forceCurve
+                        vectorForce.Force += dragVector * drag * primaryPart.AssemblyMass
+                    end
+                end)
+            else
+                vectorForce.Enabled = false
+                alignOrientation.Enabled = false
+                trail.Enabled = false
+                character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+                connection:Disconnect()
+                connection = nil
+            end
+            return Enum.ContextActionResult.Pass
+        end
+
+        local function UpAction(actionName, inputState, inputObject)
+            if inputState == Enum.UserInputState.Begin then yAxis = 1 else yAxis = 0 end
+            return Enum.ContextActionResult.Pass
+        end
+
+        local function DownAction(actionName, inputState, inputObject)
+            if inputState == Enum.UserInputState.Begin then yAxis = -1 else yAxis = 0 end
+            return Enum.ContextActionResult.Pass
+        end
+
+        contextActionService:BindAction("Fly", FlyAction, true, Enum.KeyCode.B)
+
+        contextActionService:BindAction("Up", UpAction, true, Enum.KeyCode.Space)
+
+        contextActionService:BindAction("Down", DownAction, true, Enum.KeyCode.LeftShift)
+
+
+
+        local function stopFly()
+            flyON = false
             vectorForce.Enabled = false
             alignOrientation.Enabled = false
             trail.Enabled = false
@@ -619,134 +651,119 @@ if game.PlaceId ~= 155615604 then
             connection:Disconnect()
             connection = nil
         end
-        return Enum.ContextActionResult.Pass
-    end
-
-    local function UpAction(actionName, inputState, inputObject)
-        if inputState == Enum.UserInputState.Begin then yAxis = 1 else yAxis = 0 end
-        return Enum.ContextActionResult.Pass
-    end
-
-    local function DownAction(actionName, inputState, inputObject)
-        if inputState == Enum.UserInputState.Begin then yAxis = -1 else yAxis = 0 end
-        return Enum.ContextActionResult.Pass
-    end
-
-    contextActionService:BindAction("Fly", FlyAction, true, Enum.KeyCode.B)
-
-    contextActionService:BindAction("Up", UpAction, true, Enum.KeyCode.Space)
-
-    contextActionService:BindAction("Down", DownAction, true, Enum.KeyCode.LeftShift)
 
 
+        flyPage:addToggle("Fly (Press B)", false, function(state)
+            if state then
+                flyON = true
+            else
+                stopFly()
+            end
+        end)
 
-    local function stopFly()
-        flyON = false
-        vectorForce.Enabled = false
-        alignOrientation.Enabled = false
-        trail.Enabled = false
-        character.Humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
-        connection:Disconnect()
-        connection = nil
+        flyPage:addSlider("Fly Speed", 3000, 2000, 5000, function(value)
+            force = value
+        end)
     end
 
 
-    flyPage:addToggle("Fly (Press B)", false, function(state)
-        if state then
-            flyON = true
-        else
-            stopFly()
-        end
-    end)
+    -- Teleport
 
-    flyPage:addSlider("Fly Speed", 3000, 2000, 5000, function(value)
-        force = value
-    end)
+    local teleport = playerPage:addSection("Teleport")
 
-end
+    local players = {}
+    local playerNames = {}
+    local localCharacter = nil
+    local toPlayerCFrame = CFrame.new(0,0,0)
 
--- Teleport
+    -- getting Player Names
+    for _, v in pairs(game:GetService("Players"):GetChildren()) do
+        if v.Name ~= game:GetService("Players").LocalPlayer.Name then
+            table.insert(playerNames, v.Name)
+        end 
+    end
 
-local teleport = playerPage:addSection("Teleport")
-
-local players = {}
-local playerNames = {}
-local localCharacter = nil
-local toPlayerCFrame = CFrame.new(0,0,0)
-
--- getting Player Names
-for _, v in pairs(game:GetService("Players"):GetChildren()) do
-    if v.Name ~= game:GetService("Players").LocalPlayer.Name then
-        table.insert(playerNames, v.Name)
-    end 
-end
-
--- getting Player Instances
-for _, v in pairs(game:GetService("Players"):GetChildren()) do
-    if v.Name ~= game:GetService("Players").LocalPlayer.Name then
-        table.insert(players, v)
-    end 
-end
-localCharacter = game:GetService("Players").LocalPlayer.Character
-
--- creating dropdown
-local playerDropdown = teleport:addDropdown("Select Player", playerNames, function(playerName)
-    for _, v in pairs(players) do
-        if v.Name == playerName then
-            toPlayerCFrame = v.Character.HumanoidRootPart.CFrame
-            localCharacter.HumanoidRootPart.CFrame = toPlayerCFrame
-        end
+    -- getting Player Instances
+    for _, v in pairs(game:GetService("Players"):GetChildren()) do
+        if v.Name ~= game:GetService("Players").LocalPlayer.Name then
+            table.insert(players, v)
+        end 
     end
     localCharacter = game:GetService("Players").LocalPlayer.Character
-end)
 
--- if player joins
-game:GetService("Players").PlayerAdded:Connect(function(player)
-    print(player.Name .. " joined the game!")
-	table.insert(players, player)
-    table.insert(playerNames, player.Name)
-    teleport:updateDropdown(playerDropdown, "Select Player", playerNames)
-end)
-
--- if player leaves
-num = 1
-game:GetService("Players").PlayerRemoving:Connect(function(player)
-    for _, v in pairs(playerNames) do
-        if player.Name == v then 
-            table.remove(playerNames, num)
+    -- creating dropdown
+    local playerDropdown = teleport:addDropdown("Select Player", playerNames, function(playerName)
+        for _, v in pairs(players) do
+            if v.Name == playerName then
+                toPlayerCFrame = v.Character.HumanoidRootPart.CFrame
+                localCharacter.HumanoidRootPart.CFrame = toPlayerCFrame
+            end
         end
-        num += 1
-    end
+        localCharacter = game:GetService("Players").LocalPlayer.Character
+    end)
+
+    -- if player joins
+    game:GetService("Players").PlayerAdded:Connect(function(player)
+        print(player.Name .. " joined the game!")
+        table.insert(players, player)
+        table.insert(playerNames, player.Name)
+        teleport:updateDropdown(playerDropdown, "Select Player", playerNames)
+    end)
+
+    -- if player leaves
     num = 1
-    for _, v in pairs(players) do
-        if v.Name == player.Name then
-            table.remove(players, num)
+    game:GetService("Players").PlayerRemoving:Connect(function(player)
+        for _, v in pairs(playerNames) do
+            if player.Name == v then 
+                table.remove(playerNames, num)
+            end
+            num += 1
         end
-        num += 1
-    end
-    num = 1
-    teleport:updateDropdown(playerDropdown, "Select Player", playerNames)
-end)
+        num = 1
+        for _, v in pairs(players) do
+            if v.Name == player.Name then
+                table.remove(players, num)
+            end
+            num += 1
+        end
+        num = 1
+        teleport:updateDropdown(playerDropdown, "Select Player", playerNames)
+    end)
 
--- Health page
+else
+    -- Evade
 
-local health = playerPage:addSection("Health")
+    getgenv().settings = {
+        walkSpeed = 1450,
+        jumpPower = 3
+    }
 
-health:addButton("Heal", function()
-    game.Players.LocalPlayer.Character.Humanoid.Health = game.Players.LocalPlayer.Character.Humanoid.MaxHealth
-end)
+    movement:addSlider("Walkspeed", 1, 1, 10, function(walkSpeed)
+        settings.walkSpeed = walkSpeed * 1450
+    end)
 
-local humanoid = game.Players.LocalPlayer.Character.Humanoid
+    movement:addSlider("JumpPower", 1, 1, 50, function(jumpPower)
+        settings.jumpPower = jumpPower * 3
+    end)
 
-health:addToggle("Godmode", false, function(v)
-    if v then
-        runService.Heartbeat:Connect(function()
-            humanoid.Health = humanoid.MaxHealth
-        end)
-    else
-        runService.Heartbeat:Disconnect()
-    end
-end)
+    movement:addToggle("Angry Munci (use at your own risk)", false, function(state)
+        if state then
+            settings.walkSpeed = settings.walkSpeed * 11
+        else
+            settings.walkSpeed = settings.walkSpeed / 11
+        end
+    end)
+
+    local characterMovement
+    characterMovement = hookmetamethod(game,"__namecall",newcclosure(function(self,...)
+        local args = {...}
+        local method = getnamecallmethod()
+        if tostring(self) == 'Communicator' and method == "InvokeServer" and args[1] == "update" then
+            return settings.walkSpeed, settings.jumpPower
+        end
+        return characterMovement(self,...)
+    end))
+end
 
 -- extras page
 local extra = novus:addPage("Extra", 5012544693)
@@ -805,6 +822,48 @@ end
 keybinds:addKeybind("Toggle Keybind", Enum.KeyCode.PageDown, function()
     novus:toggle() end, function()
 end)
+
+if game.PlaceId == 9872472334 or game.PlaceId == 10808838353 then
+    -- Evade
+    
+    local propertyNames = {"WalkSpeed", "JumpPower"}
+    local propertyName = "walkSpeed"
+
+    keybinds:addDropdown("Property", propertyNames, function(currentPropertyName)
+        propertyName = currentPropertyName
+        if currentPropertyName == "WalkSpeed" then
+            propertyName = "walkSpeed"
+        elseif currentPropertyName == "JumpPower" then
+            propertyName = "jumpPower"
+        end
+    end)
+
+    keybinds:addKeybind("Increase", Enum.KeyCode.B, function()
+        if propertyName == "walkSpeed" then
+            if not (getgenv().settings.walkSpeed >= 1450*10) then
+                getgenv().settings.walkSpeed += 1450
+            end
+        elseif propertyName == "jumpPower" then
+            if not (getgenv().settings.jumpPower >= 3*50) then
+                getgenv().settings.jumpPower += 25
+            end
+        end
+    end, function()
+    end)
+
+    keybinds:addKeybind("Decrease", Enum.KeyCode.V, function()
+        if propertyName == "walkSpeed" then
+            if not (getgenv().settings.walkSpeed <= 1450) then
+                getgenv().settings.walkSpeed -= 1450
+            end
+        elseif propertyName == "jumpPower" then
+            if not (getgenv().settings.walkSpeed <= 3) then
+                getgenv().settings.jumpPower -= 25
+            end
+        end
+    end, function()
+    end)
+end
 
 more:addButton("Close UI", function()
     game.CoreGui:WaitForChild("Novus Hub"):Remove()

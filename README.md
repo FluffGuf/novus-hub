@@ -3,7 +3,7 @@
 
 ### The currently supportet games are:
 
-#### [Ninja Legends](https://web.roblox.com/games/3956818381/Ninja-Legends):
+#### [Ninja Legends](https://web.roblox.com/games/3956818381):
 
 - **Auto Farm:** Ninjitsu, Money
 - **Auto Buy:** Swords, Belts, Ranks, Skills, Light Karma Skills, Dark Karma Skills
@@ -11,15 +11,19 @@
 - **Teleport:** All Islands, Light Karma Training Areas, Dark Karma Training Areas
 - **Misc:** Unlock all Islands, Collect all Chests, Collect Light Karma Chest, Collect Dark Karma Chest
 
-#### [Prison Life](https://web.roblox.com/games/155615604/Prison-Life-Cars-fixed):
+#### [Prison Life](https://web.roblox.com/games/155615604):
 
 - **Give:** Weapons (OP mode possible)
 - **Teleport:** Prison, Criminal Base
 
-#### [Slime Tower Tycoon](https://web.roblox.com/games/10675066724/Slime-Tower-Tycoon-NEW):
+#### [Slime Tower Tycoon](https://web.roblox.com/games/10675066724):
 
 - **Automatics:** Auto Collect Slime Orbs, Auto Sell, Auto Buy Slimes (1 , 5, 25, 50 or 100), Auto Buy Rate, Auto Merge Slimes
 - **Misc:** Finsish Obby
+
+#### [Evade](https://web.roblox.com/games/9872472334)
+
+- **Player:** WalkSpeed, JumpPower, AngryMunci
 
 ### Other features are:
 
@@ -27,7 +31,6 @@
 
 - **Movement:** WalkSpeed, JumpPower, Fly , NoClip
 - **Teleport:** Teleport to players
-- **Health:** Heal, Godmode
 ##### (some of these features may not work in every game)
 
 #### Extra:
